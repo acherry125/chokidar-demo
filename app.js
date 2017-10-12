@@ -3,6 +3,7 @@ http = require('http'),
 app = express(),
 path = require("path"),
 server = http.createServer(app),
+dust = require('dustjs-linkedin'),
 listeningPort = 3000;
 
 function restartServer() {
