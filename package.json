@@ -1,0 +1,27 @@
+{
+  "name": "chokidar-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "node salt-watcher.js",
+    "server": "node app.js",
+    "dev-start": "npm-run-all -p watch server",
+    "start": "npm run server"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chokidar": "^1.7.0",
+    "dustjs-linkedin": "^2.7.5",
+    "express": "^4.16.2",
+    "mkdirp": "^0.5.1"
+  },
+  "devDependencies": {
+    "chokidar": "^1.7.0",
+    "mkdirp": "^0.5.1",
+    "node-sass": "^4.5.3",
+    "rimraf": "^2.6.2"
+  }
+}
