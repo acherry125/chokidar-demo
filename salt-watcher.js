@@ -57,27 +57,7 @@ watcher
                 if (err || stderr) {
                     console.log('Error:', err, '\n', stderr);                    
                 }
-            });   
-            /*
-                // read the dust file changed
-                var src = fs.readFileSync(watchPath, 'utf8');            
-                // compile/register the dust file
-                var compiled = dust.compile(src, path.basename(watchPath));
-                dust.loadSource(compiled);
-                // create the output path
-                var pathRelativeToSourceDir = path.dirname(path.relative(path.join('assets', 'templates', 'source'), watchPath));
-                var dirPath = path.join('assets','templates','compiled', pathRelativeToSourceDir);
-                // create the output directory
-                mkdirp.sync(dirPath);
-                // write the compiled JS file to the output path
-                fs.writeFileSync(path.join(dirPath, path.basename(watchPath, path.extname(watchPath)) + '.js'), compiled);
-
-                dust.render(path.basename(watchPath), {name: 'car'}, function(err, out) {
-                    console.log(err);
-                    console.log(out);
-                })         
-                restartServer();
-            */                
+            });                
         }
         /*** JS file is changed ***/
         else if (watchPath.indexOf(path.join('assets','scripts')) != -1) {
