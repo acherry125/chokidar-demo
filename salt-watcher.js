@@ -6,6 +6,8 @@ var exec = require('child_process').exec, child;
 
 var sass = require('node-sass');
 
+var isDevEnv = process.argv.length === 3 && process.argv[2] === '--dev';
+
 // Initialize watcher.
 var watcher = chokidar.watch(
     ['assets/scss/', 'assets/templates/', 'assets/scripts/'], 
