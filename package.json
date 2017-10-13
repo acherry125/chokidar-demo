@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "node salt-watcher.js",
+    "watch": "node salt-watcher.js --dev",
     "server": "node app.js",
     "dev-start": "npm-run-all -p watch server",
     "start": "npm run server"
@@ -13,8 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "consolidate": "^0.14.5",
     "dustjs-linkedin": "^2.7.5",
-    "express": "^4.16.2",
+    "express": "^3.0.5",
     "node-sass": "^4.5.3"
   },
   "devDependencies": {
@@ -22,6 +23,7 @@
     "concat": "^1.0.3",
     "eslint": "^4.8.0",
     "mkdirp": "^0.5.1",
+    "requirejs": "^2.3.5",
     "rimraf": "^2.6.2"
   }
 }

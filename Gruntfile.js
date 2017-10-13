@@ -10,6 +10,9 @@
 
 'use strict';
 
+
+/*************** This is not used in this project, only here to show before/after ***************/
+
 module.exports = function(grunt) {
 
   // Project configuration.

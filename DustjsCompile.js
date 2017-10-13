@@ -118,12 +118,14 @@ rmdir(outDir, function (err) {
         console.log(err);
         throw err;
     }
+    console.log('directory removed.')
     // creates a folder with the value passed in outDir
     mkdirp(outDir, function (failure) {
         if (failure) {
             console.log(failure);
             throw failure;
         }
+        console.log('driectory made')
         walkInputDir(inpDir);
     });
 });

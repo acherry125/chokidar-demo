@@ -1,1 +1,15 @@
-<div>{name}{name}</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chokidar Demo</title>
+    <!-- note the script points to require-config as its point of entry where it loads the config -->
+    <script data-main="/assets/scripts/js/require-config.js" src="/assets/scripts/js/require.js"></script>
+    <script src="/assets/scripts/js/index.js"></script>    
+</head>
+<body>
+    <main id="app">page_parent loaded</main>    
+</body>
+</html>

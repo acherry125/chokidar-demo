@@ -1,1 +1,11 @@
-.partial-style{color:#5bc500}.mainStyle{color:#003765}.mainStyle .car{color:green}
+.partial-style {
+  color: #5bc500;
+}
+
+.mainStyle {
+  color: #003765;
+}
+
+.mainStyle .car {
+  color: green;
+}
