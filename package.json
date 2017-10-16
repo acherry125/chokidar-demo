@@ -6,9 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "node salt-watcher.js --dev",
+    "build": "node salt-watcher.js",
     "server": "node app.js",
     "dev-start": "npm-run-all -p watch server",
-    "start": "npm run server"
+    "start": "npm run build && npm run server"
   },
   "author": "",
   "license": "ISC",

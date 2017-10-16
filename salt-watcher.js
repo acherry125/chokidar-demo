@@ -55,7 +55,7 @@ var config = {
         config: {
             baseUrl: "./assets/scripts/js",
             name: "index",
-            out: "main-built.js",
+            out: "./assets/scripts/OptimizedJS/main.js",
             optimize: 'uglify'
         }
     }
@@ -83,7 +83,7 @@ function execPromise(command) {
     })
 }
 
-function buildSass(watchPath) {
+function buildSass() {
     console.log('\nSass file changed, running:');
     // handle the error being thrown from a failed SASS process (invalid syntax, missing file etc) or FS.write
     try {
@@ -97,21 +97,22 @@ function buildSass(watchPath) {
     }
 }
 
-function buildDust(watchPath) {
+function buildDust() {
     console.log('\nDust file changed:');
     execPromise(config.dust.buildCommand)
         .then(out => {
-            console.log(res.out)
-            console.log('Dust succesfully compiled');            
+            out ? console.log(out) : null;
+            console.log('Dust succesfully compiled');
+            return;            
         }) 
-        .catch(err => {
+        .catch(res => {
             console.log('Error compiling dust, please save again to recompile.');
             console.log(res.out);            
             console.log(res.err);
         }); 
 }
 
-function buildScripts(watchPath) {
+function buildScripts() {
     console.log('\nScript file changed:');
     execPromise(config.scripts.linter.run)
         .catch(res => {
@@ -145,12 +146,25 @@ function buildScripts(watchPath) {
     //exec('"../../ASA.Web/Sites/SALT/Content/node_modules/.bin/mocha" ../../ASA.Web/Sites/SALT/Content/test --require blanket -R html-cov > ../../ASA.Web/Sites/SALT/Content/coverage.html');
 }
 
+rimraf.sync(path.join(__dirname, 'assets', 'css'));
+mkdirp(path.join(__dirname, 'assets', 'css'));
+buildSass();
+rimraf.sync(path.join(__dirname, 'assets', 'templates', 'compiled'));
+buildDust();
+rimraf.sync(path.join(__dirname, 'assets', 'scripts', 'OptimizedJS'));
+buildScripts();
+
+if (!isDevEnv) {
+    console.log(isDevEnv);
+    return;
+}
+
 /**** Initialize watcher ****/
 var watcher = chokidar.watch(
     ['assets/scss/', 'assets/templates/', 'assets/scripts/'], 
     {
         // ignore .dotfiles, compiled dir, and css dir, and foundation.plugins.js
-        ignored: /(^|.*[\/\\])(\..\w+|(compiled|css)\/\w*)|foundation.plugins.js/,        
+        ignored: /(^|.*[\/\\])(\..\w+|(compiled|css|OptimizedJS)\/\w*)|foundation.plugins.js/,        
         persistent: true
     }
 );
@@ -160,15 +174,15 @@ watcher
     .on('change', watchPath => {
         /*** SASS File is changed ***/
         if (watchPath.indexOf(path.join('assets','scss')) !== -1) {
-            buildSass(watchPath);
+            buildSass();
         }
         /*** DUST file is changed ***/
         else if (watchPath.indexOf(path.join('assets','templates')) != -1) {
-            buildDust(watchPath);              
+            buildDust();              
         }
         /*** JS file is changed ***/
         else if (watchPath.indexOf(path.join('assets','scripts')) != -1) {
-            buildScripts(watchPath);
+            buildScripts();
         } 
         /*** shouldn't be any other type of file in these folders, log to identify ***/
         else {
