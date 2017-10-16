@@ -7,7 +7,6 @@ listeningPort = 3000;
 
 var config = require('./config');
 config(app);
-//app.configure({})
 
 app.disable('x-powered-by');
 
