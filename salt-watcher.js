@@ -32,7 +32,7 @@ var config = {
         linter: {
             exe: path.join('node_modules', '.bin', 'eslint'),
             files: [
-                '/assets/source',
+                'assets/scripts/js',
                 'app.js'
             ].join(' '),
             options: '',            
@@ -41,11 +41,11 @@ var config = {
         /* CONCAT */
         concat: {
             input: [
-                'assets/scripts/foundation-plugins/fdnt-plugin-1.js',
-                'assets/scripts/foundation-plugins/fdnt-plugin-2.js',
-                'assets/scripts/foundation-plugins/fdnt-plugin-3.js'
+                'assets/scripts/js/foundation-plugins/foundation-plugin-1.js',
+                'assets/scripts/js/foundation-plugins/foundation-plugin-2.js',
+                'assets/scripts/js/foundation-plugins/foundation-plugin-3.js'
             ],
-            output: 'assets/scripts/foundation-plugins/foundation.plugins.js'
+            output: 'assets/scripts/js/foundation-plugins/foundation.plugins.js'
         },
         tests: {
             // add paths here
@@ -64,13 +64,7 @@ config.scripts.linter.run = [config.scripts.linter.exe, config.scripts.linter.fi
 config.requirejs.run = [config.requirejs.exe, config.requirejs.param, config.requirejs.optionsFile].join(' ');
 
 if (isDevEnv) {
-    config.sass = {
-        inputConfig: {
-            file: 'assets/scss/style.scss',
-            outputStyle: 'expanded'
-        },
-        outputPath: path.join('assets','css','style.css')
-    }
+    config.sass.outputStyle = 'expanded';
     config.requirejs.config.optimize = 'none';
 } 
 
@@ -78,22 +72,15 @@ function execPromise(command) {
     return new Promise(function(resolve, reject) {
         exec(command, function(err, stdout, stderr) {
             if (err !== null) {
-                return reject(err);
+                return reject({"err": err, "out": stdout});
             } else if (stderr !== '') {
-                return reject(stderr);
+                return reject({"err": stderr, "out": stdout});
             }
             else {
                 return resolve(stdout);
             }
         })
     })
-}
-
-function printExecOutput(err, stdout, stderr) {
-    console.log(stdout);
-    err || stderr ? console.log('ERROR:') : null;
-    err ? console.log(err) : null;
-    stderr ? console.log(err) : null;
 }
 
 function buildSass(watchPath) {
@@ -114,42 +101,56 @@ function buildDust(watchPath) {
     console.log('\nDust file changed:');
     execPromise(config.dust.buildCommand)
         .then(out => {
-            console.log(out)
+            console.log(res.out)
             console.log('Dust succesfully compiled');            
         }) 
         .catch(err => {
             console.log('Error compiling dust, please save again to recompile.');
-            console.log(err);            
+            console.log(res.out);            
+            console.log(res.err);
         }); 
 }
 
 function buildScripts(watchPath) {
     console.log('\nScript file changed:');
-    exec(config.scripts.linter.run, printExecOutput);
+    execPromise(config.scripts.linter.run)
+        .catch(res => {
+            errorMsg = res.out ? res.out : res.err;
+            return Promise.reject(errorMsg);
+        })
+        .then(out => {
+            console.log(out);
+            console.log('Concating.');
+            return concat(config.scripts.concat.input, config.scripts.concat.output)
+        })
+        .then(out => {
+            // insert mocha exec's commented out below here
+            console.log('Optimizing with requireJS.')
+            requirejs.optimize(config.requirejs.config, 
+                buildResponse => {
+                    console.log(buildResponse);
+                    console.log('Scripts succesfully built.')
+                }, 
+                err => {
+                    console.log(err);
+                });            
+        })
+        .catch(err => {
+            console.log('Error building scripts. Fix errors and rebuild.')
+            console.log(err);
+        })
     // I'm not going to setup an entire mocha testing framework, so since these commands works in SALT, it should here
     //exec('mocha-phantomjs -R spec -s webSecurityEnabled=false -p phantomjs.exe ./BuildSpec.html');
     //exec('../../ASA.Web/Sites/SALT/Content/node_modules/.bin/mocha" ../../ASA.Web/Sites/SALT/Content/test -R tap');
     //exec('"../../ASA.Web/Sites/SALT/Content/node_modules/.bin/mocha" ../../ASA.Web/Sites/SALT/Content/test --require blanket -R html-cov > ../../ASA.Web/Sites/SALT/Content/coverage.html');
-    //concat(config.scripts.concat.input, config.scripts.concat.output);
-    //exec(config.requirejs.run);
-    requirejs.optimize(config.requirejs.config, function (buildResponse) {
-        //buildResponse is just a text output of the modules
-        //included. Load the built file for the contents.
-        //Use config.out to get the optimized file contents.
-        var contents = fs.readFileSync(config.out, 'utf8');
-        console.log(contents);
-    }, function(err) {
-        //optimization err callback
-        console.log(err);
-    });
 }
 
 /**** Initialize watcher ****/
 var watcher = chokidar.watch(
     ['assets/scss/', 'assets/templates/', 'assets/scripts/'], 
     {
-        // ignore .dotfiles, compiled dir, and css dir
-        ignored: /(^|.*[\/\\])(\..\w+|(compiled|css)\/\w*)/,        
+        // ignore .dotfiles, compiled dir, and css dir, and foundation.plugins.js
+        ignored: /(^|.*[\/\\])(\..\w+|(compiled|css)\/\w*)|foundation.plugins.js/,        
         persistent: true
     }
 );

@@ -1,3 +1,3 @@
-'fdnt part 1'
-'fdnt part 2'
-'fdnt part 3'
+var plugin1 = "car";
+var plugin2 = "boat";
+var plugin3 = "plane";
