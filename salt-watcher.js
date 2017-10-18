@@ -154,6 +154,7 @@ buildDust();
 rimraf.sync(path.join(__dirname, 'assets', 'scripts', 'OptimizedJS'));
 buildScripts();
 
+// If this is being run in production, we don't want to enable the watcher, so end the file here.
 if (!isDevEnv) {
     console.log(isDevEnv);
     return;
